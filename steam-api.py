@@ -27,7 +27,7 @@ def json_request_general(path, flags=[]):
         return request.json()
 
 def get_logo_url(game: Game):
-    if(game.appid is None or game.img_icon_url is None):
+    if(game.appid is None or game.img_logo_url is None):
         return None
     return "http://media.steampowered.com/steamcommunity/public/images/apps/{appid}/{hash}.jpg".format(appid=game.appid, hash=game.img_logo_url)
 
