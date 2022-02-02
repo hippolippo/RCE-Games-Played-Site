@@ -16,6 +16,14 @@ class Game:
         self.playtime_mac_forever = gamedata['playtime_mac_forever'] if 'playtime_mac_forever' in gamedata else None
         self.playtime_linux_forever = gamedata['playtime_linux_forever'] if 'playtime_linux_forever' in gamedata else None
 
+class GameList:
+
+    def __init__(self, game_list):
+        self.game_list = game_list
+
+    def sorted_by_playtime(self):
+        return GameList(sorted(self.game_list, key=lambda list: list.playtime_forever, reverse=True))
+
 def json_request(path, flags=[]):
     request = requests.get("http://api.steampowered.com" + path+"?key=" + API_KEY + "&steamid=" + USER_ID + "&".join([""] + flags) + "&format=json")
     if request.status_code == 200:
@@ -31,8 +39,10 @@ def get_logo_url(game: Game):
         return None
     return "http://media.steampowered.com/steamcommunity/public/images/apps/{appid}/{hash}.jpg".format(appid=game.appid, hash=game.img_logo_url)
 
+def generate_gamelist():
+    data = json_request("/IPlayerService/GetOwnedGames/v0001/", ["include_appinfo=true"])
+    game_data = data['response']['games']
+    games = [Game(info) for info in game_data]
+    game_list = GameList(games)
+    return game_list
 
-data = json_request("/IPlayerService/GetOwnedGames/v0001/", ["include_appinfo=true"])
-game_data = data['response']['games']
-games = [Game(info) for info in game_data]
-print(get_logo_url(games[3]), games[3].playtime_forever)
