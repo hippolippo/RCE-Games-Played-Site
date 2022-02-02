@@ -12,7 +12,7 @@ import generic
 import requests
 
 # Steam API key. Do Not Share
-API_KEY = "A908ED00E26D38151C195B78C8FE179D"
+API_KEY = ""
 # The id of the user that this will be applied to (RCE)
 USER_ID = "76561198333972976"
 
