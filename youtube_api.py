@@ -45,8 +45,23 @@ class YoutubeVideo:
         print("|")
 
     def get_game_name(self):
-        request = requests.get(f"https://www.youtube.com/watch?v={self.id}")
-        return re.findall("""(?<=,"title":\{"simpleText":").*?(?="},"subtitle")""", request.content.decode("utf-8"))[0].split("\"}")[0]
+        overrides = json.load(open("video_game_override.json", "r"))["videos"]
+        if self.id in overrides:
+            return overrides[self.id]
+        cache = json.load(open("video_game_cache.json", "r"))
+        if self.id in cache:
+            game_name = cache[self.id]
+        else:
+            request = requests.get(f"https://www.youtube.com/watch?v={self.id}")
+            game_name = re.findall("""(?<=,"title":\{"simpleText":").*?(?="},"subtitle")""", request.content.decode("utf-8"))[0].split("\"}")[0]
+            cache[self.id] = game_name
+            with open("video_game_cache.json", "w") as file:
+                json.dump(cache, file)
+        overrides = json.load(open("video_game_override.json", "r"))["games"]
+        if game_name in overrides:
+            return overrides[game_name]
+        else:
+            return game_name
 
 YoutubeGames = YoutubeGameList([]);
 
