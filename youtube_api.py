@@ -6,7 +6,6 @@ All Code is written by Hippolippo and is licensed through the Creative Commons L
 # A module to serve the purpose of gathering data about the videos made by a channel
 
 # Project Modules
-from numpy import load
 import generic
 
 # Other Modules
@@ -15,7 +14,7 @@ import json
 import re
 
 # Youtube API Key. Do Not Share
-API_KEY = "AIzaSyBN1Wn7EikreWMnNgynpSizYVbY4wJjlLE"
+API_KEY = ""
 # The id of the channel that this will be applied to (RCE)
 CHANNEL_ID = "UCeP4Yv3s4RvS0-6d9OInRMw"
 
