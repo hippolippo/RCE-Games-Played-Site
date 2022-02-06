@@ -12,7 +12,7 @@ import generic
 import requests
 
 # Steam API key. Do Not Share
-API_KEY = ""
+API_KEY = "A908ED00E26D38151C195B78C8FE179D"
 # The id of the user that this will be applied to (RCE)
 USER_ID = "76561198333972976"
 
@@ -64,3 +64,5 @@ def generate_steamgamelist() -> SteamGameList:
     games = [SteamGame(info) for info in game_data]
     game_list = SteamGameList(games)
     return game_list
+
+print([(game.name, game.playtime_forever) for game in generate_steamgamelist().sorted_by_playtime().game_list])
