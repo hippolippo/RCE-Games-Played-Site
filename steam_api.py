@@ -68,4 +68,6 @@ def generate_steamgamelist() -> SteamGameList:
     game_list = SteamGameList(games)
     return game_list
 
-#print([(game.name, game.playtime_forever) for game in generate_steamgamelist().sorted_by_playtime().game_list])
+
+if __name__ == "__main__":
+    print([(game.name, game.appid) for game in generate_steamgamelist().sorted_by_playtime().game_list])

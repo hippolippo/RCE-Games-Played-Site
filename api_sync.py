@@ -86,13 +86,23 @@ class API_Syncer:
         game_data.last_video_date = game_data.last_video.date
         return game_data
 
-if __name__ == "__main__":
-    print("Running Tests for API Sync")
-    vids = youtube_api.load_videos_from_cache()
+def generate_synced_apis(load_cached=True):
+    if load_cached:
+        vids = youtube_api.load_videos_from_cache()
+    else:
+        vids = youtube_api.get_all_videos()
     vids = [youtube_api.YoutubeVideo(vid) for vid in vids]
     steam_games = steam_api.generate_steamgamelist()
     non_steam = generic.GameList([])
     synced = API_Syncer(steam_games, steam_api.SteamGameList([vid.game for vid in vids]), non_steam)
+    return synced
+
+def update_videos(regenerate_videos=False, regenerate_games=False):
+    pass
+
+if __name__ == "__main__":
+    print("Running Tests for API Sync")
+    synced = generate_synced_apis()
     print(synced.get_game_info("Poly Bridge 2"))
     print(synced.get_game_videos("Poly Bridge 2"))
     print(synced.get_youtube_game_from_name("Poly Bridge 2"))
