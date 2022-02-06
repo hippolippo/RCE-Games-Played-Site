@@ -35,6 +35,9 @@ class SteamGame(generic.Game):
         if(self.appid is None or self.img_logo_url is None):
             return None
         return "http://media.steampowered.com/steamcommunity/public/images/apps/{appid}/{hash}.jpg".format(appid=self.appid, hash=self.img_logo_url)
+    
+    def __repr__(self):
+        return f"Steam Game \"{self.name}\" with {self.playtime_forever} minutes of playtime"
 
 # An object describing a list of SteamGame Objects with methods to return the list sorted
 class SteamGameList(generic.GameList):
@@ -65,4 +68,4 @@ def generate_steamgamelist() -> SteamGameList:
     game_list = SteamGameList(games)
     return game_list
 
-print([(game.name, game.playtime_forever) for game in generate_steamgamelist().sorted_by_playtime().game_list])
+#print([(game.name, game.playtime_forever) for game in generate_steamgamelist().sorted_by_playtime().game_list])

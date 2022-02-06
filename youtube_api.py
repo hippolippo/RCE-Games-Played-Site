@@ -21,13 +21,18 @@ CHANNEL_ID = "UCeP4Yv3s4RvS0-6d9OInRMw"
 
 class YoutubeGame(generic.Game):
 
-    videos = []
+    def __init__(self, name, logo_url=None, playtime=None):
+        super().__init__(name, logo_url, playtime)
+        self.videos = []
 
     def add_video(self, video):
         self.videos.append(video)
 
     def list_videos(self):
         return self.videos
+
+    def __repr__(self):
+        return f"Youtube Game \"{self.get_game_name()}\" with {len(self.videos)} videos"
 
 class YoutubeGameList(generic.GameList):
 
@@ -67,6 +72,9 @@ class YoutubeVideo:
             return overrides[game_name]
         else:
             return game_name
+    
+    def __repr__(self):
+        return self.id
     
 
 YoutubeGames = YoutubeGameList([]);
@@ -141,6 +149,7 @@ vids = get_all_videos()
 with open("stuff", "w") as file:
     json.dump(vids, file)
 """
+"""
 vids = load_videos_from_cache()
 should_update = False
 if should_update:
@@ -150,3 +159,4 @@ if should_update:
 
 videos = [YoutubeVideo(vid) for vid in vids]
 [print(item.title, end="\n") for item in videos if item.gameName == "Infra"]
+"""

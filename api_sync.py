@@ -27,6 +27,9 @@ class Game_Data:
     last_video_date = None
     last_video = None
 
+    def __repr__(self):
+        return f"Game Data: {self.name}, {self.video_count} videos, {self.playtime} minutes played, last video released {self.last_video_date}, recent video id: {self.last_video}"
+
 class API_Syncer:
 
     def __init__(self, steam_games: steam_api.SteamGameList, youtube_games: youtube_api.YoutubeGameList, non_steam_games: generic.GameList):
@@ -77,7 +80,20 @@ class API_Syncer:
         game_data = Game_Data()
         game_data.name = game.get_game_name()
         game_data.thumbnail = game.get_logo_url()
-        game_data.video_count = len(video_list.game_list)
+        game_data.video_count = len(video_list)
         game_data.playtime = game.get_game_playtime()
-        game_data.last_video = sorted(self.reverse_game_dict[game].videos, key = lambda x: x["snippet"]["publishTime"]))[-1]
+        game_data.last_video = sorted(self.reverse_game_dict[game].videos, key = lambda x: x.date)[-1]
         game_data.last_video_date = game_data.last_video.date
+        return game_data
+
+if __name__ == "__main__":
+    print("Running Tests for API Sync")
+    vids = youtube_api.load_videos_from_cache()
+    vids = [youtube_api.YoutubeVideo(vid) for vid in vids]
+    steam_games = steam_api.generate_steamgamelist()
+    non_steam = generic.GameList([])
+    synced = API_Syncer(steam_games, steam_api.SteamGameList([vid.game for vid in vids]), non_steam)
+    print(synced.get_game_info("Poly Bridge 2"))
+    print(synced.get_game_videos("Poly Bridge 2"))
+    print(synced.get_youtube_game_from_name("Poly Bridge 2"))
+    print(synced.get_game_from_name("Poly Bridge 2"))
