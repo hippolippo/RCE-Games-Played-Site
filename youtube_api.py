@@ -137,25 +137,3 @@ def load_videos_from_cache():
     vids = sorted(vids, key= lambda x: x["snippet"]["publishTime"])
     return vids
     
-    
-        
-"""with open("stuff", "w") as file:
-    videos = get_all_videos()
-    print(YoutubeVideo(videos[1]).gameName)
-    json.dump(videos, file)"""
-"""
-vids = get_all_videos()
-with open("stuff", "w") as file:
-    json.dump(vids, file)
-"""
-"""
-vids = load_videos_from_cache()
-should_update = False
-if should_update:
-    update_videos(vids)
-    with open("video_data_cache.json", "w") as file:
-        json.dump(vids, file)
-
-videos = [YoutubeVideo(vid) for vid in vids]
-[print(item.title, end="\n") for item in videos if item.gameName == "Infra"]
-"""

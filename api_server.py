@@ -12,6 +12,7 @@ import api_sync
 import json
 
 def format_video(video: api_sync.Video_Data):
+    # The format of the video will depend on the web design for the site which is not determined yet
     pass
 
 def format_game(game: api_sync.Game_Data):
