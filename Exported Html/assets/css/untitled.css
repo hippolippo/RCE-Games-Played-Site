@@ -1,0 +1,11 @@
+.video_thumbnail {
+  margin: -9.375% 0;
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.video_thumbnail_holder {
+  overflow: hidden;
+}
+

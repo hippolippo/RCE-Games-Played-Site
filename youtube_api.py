@@ -1,6 +1,6 @@
 
 """
-All Code is written by Hippolippo and is licensed through the Creative Commons License
+All Code is written by Hippolippo and is licensed through the MIT License
 """
 
 # A module to serve the purpose of gathering data about the videos made by a channel
@@ -49,6 +49,11 @@ class YoutubeVideo:
         self.title = json["snippet"]["title"]
         self.thumbnail = json["snippet"]["thumbnails"]["high"]
         self.date = json["snippet"]["publishTime"]
+        self.description = json["snippet"]["description"]
+
+    @property
+    def link(self):
+        return f"https://www.youtube.com/watch?v={self.id}"
         
 
     def get_game_name(self):

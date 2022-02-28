@@ -1,6 +1,6 @@
 
 """
-All Code is written by Hippolippo and is licensed through the Creative Commons License
+All Code is written by Hippolippo and is licensed through the MIT License
 """
 
 # A module with the purpose of syncing the apis, this will match the games from steam to a game on youtube
@@ -18,6 +18,8 @@ class Video_Data:
     thumbnail = None
     title = None
     date = None
+    link = None
+    description = None
 
 class Game_Data:
     name = None
@@ -56,6 +58,8 @@ class API_Syncer:
         data.thumbnail = video.thumbnail
         data.title = video.title
         data.date = video.date
+        data.description = video.description
+        data.link = f"https://www.youtube.com/watch?v={video.id}"
         return data
     
     def get_game_from_name(self, game_name):
@@ -114,7 +118,4 @@ def update_videos(regenerate_videos=False, regenerate_games=False):
 if __name__ == "__main__":
     print("Running Tests for API Sync")
     synced = generate_synced_apis()
-    print(synced.get_game_info("Poly Bridge 2"))
-    print(synced.get_game_videos("Poly Bridge 2"))
-    print(synced.get_youtube_game_from_name("Poly Bridge 2"))
-    print(synced.get_game_from_name("Poly Bridge 2"))
+    print([(video.thumbnail['url'], video.description) for video in synced.get_game_videos("Poly Bridge 2")])

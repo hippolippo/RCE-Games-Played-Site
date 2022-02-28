@@ -1,6 +1,6 @@
 
 """
-All Code is written by Hippolippo and is licensed through the Creative Commons License
+All Code is written by Hippolippo and is licensed through the MIT License
 """
 
 # A module with the purpose of syncing the apis, this will match the games from steam to a game on youtube
@@ -12,8 +12,7 @@ import api_sync
 import json
 
 def format_video(video: api_sync.Video_Data):
-    # The format of the video will depend on the web design for the site which is not determined yet
-    pass
+    return [video.title, video.link, video.description, video.thumbnail['url']]
 
 def format_game(game: api_sync.Game_Data):
     playtime = game.playtime
@@ -49,11 +48,12 @@ class API_Server:
         games = sorted(games, key=lambda x: x.last_video_date)[::-1]
         stored_games = [game.name for game in games]
         games += sorted([self.api_sync.get_steam_info(game) for game in self.api_sync.steam_games.game_list if game.name not in stored_games], key=lambda x: x.playtime)[::-1]
+        print ([format_game(game) for game in games])
         return [format_game(game) for game in games]
 
     def get_game_data(self, game):
         videos = self.api_sync.get_game_videos(game)
-        videos = videos.sorted(videos, key=lambda x: x.date)[::1]
+        videos = sorted(videos, key=lambda x: x.date)[::1]
         return [format_video(video) for video in videos]
 
 

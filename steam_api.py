@@ -1,6 +1,6 @@
 
 """
-All Code is written by Hippolippo and is licensed through the Creative Commons License
+All Code is written by Hippolippo and is licensed through the MIT License
 """
 
 # A module to serve the purpose of gathering games from the steam api
@@ -12,7 +12,7 @@ import generic
 import requests
 
 # Steam API key. Do Not Share
-API_KEY = ""
+API_KEY = "A908ED00E26D38151C195B78C8FE179D"
 # The id of the user that this will be applied to (RCE)
 USER_ID = "76561198333972976"
 
@@ -70,4 +70,5 @@ def generate_steamgamelist() -> SteamGameList:
 
 
 if __name__ == "__main__":
-    print([(game.name, game.appid) for game in generate_steamgamelist().sorted_by_playtime().game_list])
+    print([(game.get_logo_url(), game.img_icon_url) for game in generate_steamgamelist().game_list if game.name == "Poly Bridge 2"])
+    #print([(game.name, game.appid) for game in generate_steamgamelist().sorted_by_playtime().game_list])

@@ -1,6 +1,6 @@
 
 """
-All Code is written by Hippolippo and is licensed through the Creative Commons License
+All Code is written by Hippolippo and is licensed through the MIT License
 """
 
 class Game:
