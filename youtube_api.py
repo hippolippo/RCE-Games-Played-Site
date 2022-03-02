@@ -14,7 +14,7 @@ import json
 import re
 
 # Youtube API Key. Do Not Share
-API_KEY = "AIzaSyCsP2W7-s43_rMgBgqRgYMIh9blpC7V1do"
+API_KEY = ""
 # The id of the channel that this will be applied to (RCE)
 CHANNEL_ID = "UCeP4Yv3s4RvS0-6d9OInRMw"
 
