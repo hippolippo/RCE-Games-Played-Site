@@ -48,13 +48,16 @@ class API_Server:
         games = sorted(games, key=lambda x: x.last_video_date)[::-1]
         stored_games = [game.name for game in games]
         games += sorted([self.api_sync.get_steam_info(game) for game in self.api_sync.steam_games.game_list if game.name not in stored_games], key=lambda x: x.playtime)[::-1]
-        print ([format_game(game) for game in games])
         return [format_game(game) for game in games]
 
     def get_game_data(self, game):
         videos = self.api_sync.get_game_videos(game)
         videos = sorted(videos, key=lambda x: x.date)[::1]
-        return [format_video(video) for video in videos]
+        return (game, format_game(self.api_sync.get_game_info(game))[1], [format_video(video) for video in videos])
+
+    def override_game(self, game, name, url):
+        self.api_sync.youtube_game_name_dict[game].override(name, url)
+        self.api_sync.__init__(self.api_sync.steam_games, self.api_sync.youtube_games, self.api_sync.non_steam_games)
 
 
 if __name__ == "__main__":

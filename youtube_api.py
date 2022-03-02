@@ -14,13 +14,14 @@ import json
 import re
 
 # Youtube API Key. Do Not Share
-API_KEY = ""
+API_KEY = "AIzaSyCsP2W7-s43_rMgBgqRgYMIh9blpC7V1do"
 # The id of the channel that this will be applied to (RCE)
 CHANNEL_ID = "UCeP4Yv3s4RvS0-6d9OInRMw"
 
 class YoutubeGame(generic.Game):
 
-    def __init__(self, name, logo_url=None, playtime=None):
+    def __init__(self, name, logo_url=None, playtime=None, original_name=None):
+        self.original_name = original_name if original_name is not None else name;
         super().__init__(name, logo_url, playtime)
         self.videos = []
 
@@ -29,6 +30,15 @@ class YoutubeGame(generic.Game):
 
     def list_videos(self):
         return self.videos
+
+    def override(self, name, url):
+        overrides = {}
+        with open("video_game_override.json", "r") as file:
+            overrides = json.load(file)
+        overrides["games"][self.original_name] = [name, url]
+        with open("video_game_override.json", "w") as file:
+            json.dump(overrides, file)
+        self.name = name
 
     def __repr__(self):
         return f"Youtube Game \"{self.get_game_name()}\" with {len(self.videos)} videos"
@@ -44,8 +54,10 @@ class YoutubeVideo:
     
     def __init__(self, json):
         self.id = json["id"]["videoId"]
-        self.gameName = self.get_game_name()
-        self.game = initialize_game(self.gameName, self)
+        temp = self.get_game_name()
+        self.gameName = temp[0]
+        self.originalGameName = temp[1]
+        self.game = initialize_game(self.gameName, self, original_name=self.originalGameName)
         self.title = json["snippet"]["title"]
         self.thumbnail = json["snippet"]["thumbnails"]["high"]
         self.date = json["snippet"]["publishTime"]
@@ -73,9 +85,9 @@ class YoutubeVideo:
                 json.dump(cache, file)
         overrides = json.load(open("video_game_override.json", "r"))["games"]
         if game_name in overrides:
-            return overrides[game_name]
+            return overrides[game_name][0], game_name
         else:
-            return game_name
+            return game_name, game_name
     
     def __repr__(self):
         return self.id
@@ -83,10 +95,10 @@ class YoutubeVideo:
 
 YoutubeGames = YoutubeGameList([]);
 
-def initialize_game(gameName, video):
+def initialize_game(gameName, video, original_name=None):
     global YoutubeGames
     if True not in [gameName == game.get_game_name() for game in YoutubeGames.game_list]:
-        YoutubeGames.append(YoutubeGame(gameName))
+        YoutubeGames.append(YoutubeGame(gameName, original_name=original_name))
     game = YoutubeGames.game_list[[gameName == game.get_game_name() for game in YoutubeGames.game_list].index(True)]
     game.add_video(video)
     return game
@@ -98,12 +110,12 @@ def json_request(path, flags=[]):
     request = requests.get("https://www.googleapis.com/youtube/v3" + path + "?key=" + API_KEY + "&channelId=" + CHANNEL_ID + "&".join([""] + flags))
     if request.status_code == 200:
         return request.json()
-    print(request.json())
 
 
 # Make a request to a specific api path without the user id
 # DO NOT PUT USER INPUT INTO THE PARAMETERS OF THIS METHOD
 def json_request_general(path, flags=[]):
+    print(f"making request to {path} with flags {flags}")
     request = requests.get("https://www.googleapis.com/youtube/v3" + path + "?key=" + API_KEY  + "&".join([""] + flags))
     if request.status_code == 200:
         return request.json()
@@ -115,6 +127,8 @@ def get_all_videos():
     while "nextPageToken" in result:
         result = json_request("/search", ["order=date","part=snippet","type=video","max_results=50", f"pageToken={result['nextPageToken']}"])
         items += result["items"]
+    with open("video_data_cache.json", "w") as file:
+        json.dump(sorted(items,key= lambda x: x["snippet"]["publishTime"]), file)
     return sorted(items,key= lambda x: x["snippet"]["publishTime"])
 
 def update_videos(current_list):

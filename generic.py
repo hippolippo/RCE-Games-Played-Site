@@ -44,6 +44,11 @@ class GameList:
     def add_game(self, game: Game):
         self.game_list.append(game)
 
+    def get_game(self, game: str):
+        applicable_games = [game for game in self.game_list if game.name == game]
+        if len(applicable_games) == 0: return None
+        return applicable_games[0]
+
     # This sorts them based on the results of their get_game_playtime function
     def sorted_by_playtime(self):
         return GameList(sorted(self.game_list, key=lambda item: (item.get_game_playtime() if item.get_game_playtime() is not None else 0), reverse=True))

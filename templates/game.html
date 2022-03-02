@@ -19,8 +19,8 @@
         <div class="container"><a class="navbar-brand logo" href="index.html">Real Civil Engineer</a><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navcol-1">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="index.html">Games</a></li>
-                    <li class="nav-item"><a class="nav-link" href="socials.html">Socials</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/">Games</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/socials">Socials</a></li>
                     <li class="nav-item"><a class="nav-link" href="https://www.youtube.com/c/RealCivilEngineerGaming/videos">Videos</a></li>
                     <li class="nav-item"><a class="nav-link" href="https://www.twitch.tv/realcivilengineer">LiveStreams</a></li>
                     <li class="nav-item"><a class="nav-link" href="https://www.youtube.com/channel/UClktduM8LupB3Jep7l0nlLA/videos">Vods</a></li>
@@ -32,26 +32,43 @@
     </nav>
     <main class="page landing-page">
         <section style="height: auto;width: auto;min-width: 0px;"><img src="https://yt3.ggpht.com/8o7zzCwixW4_7E1FiG56YtxZS3FIoxFnMytCaLjNEqNAebZqd04seAmcgTbf-tA3yl2-fRTm8Q=w2120-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj" style="width: 100%;height: auto;"></section>
-        <section class="clean-block clean-info dark" style="max-height: none;height: auto;background: rgb(242,242,242);">
+        <section class="clean-block clean-info dark" style="height: auto;background: rgb(242,242,242);padding-bottom: 20px;">
             <div class="container">
                 <div class="block-heading" style="padding-top: 50px;">
-                    <h2 class="text-info">Edit Game</h2><small>Note: Naming the game to the same thing as a steam game will merge them together</small>
-                    <form style="width: auto;margin-right: 200px;margin-left: 200px;">
-                        <div class="row" style="padding: 10px;">
-                            <div class="col-4"><label class="col-form-label">Game Name</label></div>
-                            <div class="col-8"><input class="form-control" name="name" type="text"></div>
-                        </div>
-                        <div class="row" style="padding: 10px;">
-                            <div class="col-4"><label class="col-form-label">Logo Url</label></div>
-                            <div class="col-8"><input class="form-control" type="text" name="url"></div>
-                        </div>
-                        <input hidden type="text" name="game" value="{{game}}">
-                        <div class="row" style="padding: 10px;">
-                            <div class="col"><input class="btn btn-primary" type="submit" value="Submit"></div>
-                        </div>
-                    </form>
+                    <h2 class="text-info">{{game}}</h2>
+                    <div class="d-inline-flex justify-content-md-center justify-content-xxl-center" style="width: 100%;"><img class="d-xxl-flex" src="{{logo}}" width="500px" height="auto" style="filter: brightness(100%);transform: perspective(0px) rotate(0deg) skew(0deg);"></div>
                 </div>
             </div>
+        </section>
+        <section style="padding: 15px;">
+            <div class="search-container"></div>
+            <section class="justify-content-xxl-center" style="width: 100%;">
+                {%- for video in videos %}
+                <div class="row text-start d-xxl-flex justify-content-xxl-center" style="width: 100%;">
+                    <div class="col d-flex justify-content-xxl-center" style="width: 100%;">
+                        <div class="row" style="background: #ebf4f7;padding: 10px;margin: 10px;max-width: 1000px;">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col" style="height: auto;">
+                                        <div></div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div><a href="{{video[1]}}">
+                                                <p style="font-size: 20px;color: rgb(0,40,81);margin-bottom: 0px;height: auto;"><br>{{video[0]}}<br><br></p>
+                                            </a>
+                                            <p>{{video[2]}}</p>
+                                        </div>{% if admin %}<button class="btn btn-primary" type="button">Edit Details</button>{% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col video_thumbnail_holder" style="min-width: 200px;"><img class="video_thumbnail" src="{{video[3]}}" width="100%" height="auto"></div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </section>
         </section>
     </main>
     <footer class="page-footer dark" style="padding: 0px;">

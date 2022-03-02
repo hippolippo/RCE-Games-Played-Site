@@ -10,6 +10,7 @@ import generic
 
 # Other Modules
 import requests
+import json
 
 # Steam API key. Do Not Share
 API_KEY = "A908ED00E26D38151C195B78C8FE179D"
@@ -49,6 +50,7 @@ class SteamGameList(generic.GameList):
 # Make a request to a specific api path including the user id
 # DO NOT PUT USER INPUT INTO THE PARAMETERS OF THIS METHOD
 def json_request(path, flags=[]):
+    print(f"making request to {path} with flags {flags}")
     request = requests.get("http://api.steampowered.com" + path + "?key=" + API_KEY + "&steamid=" + USER_ID + "&".join([""] + flags) + "&format=json")
     if request.status_code == 200:
         return request.json()
@@ -56,14 +58,22 @@ def json_request(path, flags=[]):
 # Make a request to a specific api path without the user id
 # DO NOT PUT USER INPUT INTO THE PARAMETERS OF THIS METHOD
 def json_request_general(path, flags=[]):
+    print(f"making request to {path} with flags {flags}")
     request = requests.get("http://api.steampowered.com" + path + "?key=" + API_KEY  + "&".join([""] + flags) + "&format=json")
     if request.status_code == 200:
         return request.json()
 
 # Creates a SteamGameList object by finding the games owned by the user
-def generate_steamgamelist() -> SteamGameList:
-    data = json_request("/IPlayerService/GetOwnedGames/v0001/", ["include_appinfo=true"])
-    game_data = data['response']['games']
+def generate_steamgamelist(load_cache=True) -> SteamGameList:
+    game_data = {}
+    if not load_cache:
+        data = json_request("/IPlayerService/GetOwnedGames/v0001/", ["include_appinfo=true"])
+        game_data = data['response']['games']
+        with open("steam_game_cache.json", "w") as file:
+            json.dump(game_data, file)
+    else:
+        with open("steam_game_cache.json", "r") as file:
+            game_data = json.load(file)
     games = [SteamGame(info) for info in game_data]
     game_list = SteamGameList(games)
     return game_list

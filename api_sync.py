@@ -37,6 +37,8 @@ class API_Syncer:
     def __init__(self, steam_games: steam_api.SteamGameList, youtube_games: youtube_api.YoutubeGameList, non_steam_games: generic.GameList):
         self.game_dict: dict[youtube_api.YoutubeGame, generic.Game] = dict()
         self.steam_games = steam_games
+        self.youtube_games = youtube_games
+        self.non_steam_games = non_steam_games
         for game in youtube_games.game_list:
             steam_overlap = [steam_game for steam_game in steam_games.game_list if steam_game.name == game.name]
             non_steam_overlap = [non_steam_game for non_steam_game in non_steam_games.game_list if non_steam_game.name == game.name]
@@ -107,7 +109,7 @@ def generate_synced_apis(load_cached=True):
     else:
         vids = youtube_api.get_all_videos()
     vids = [youtube_api.YoutubeVideo(vid) for vid in vids]
-    steam_games = steam_api.generate_steamgamelist()
+    steam_games = steam_api.generate_steamgamelist(load_cache=load_cached)
     non_steam = generic.GameList([])
     synced = API_Syncer(steam_games, steam_api.SteamGameList([vid.game for vid in vids]), non_steam)
     return synced
