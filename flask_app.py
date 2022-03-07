@@ -23,7 +23,7 @@ def game():
     if "admin" not in session: session["admin"] = False
     game = request.args.get('game')
     data = api.get_game_data(game)
-    return render_template('game.html', videos=data[2], game=data[0], logo=data[1], admin=session["admin"])
+    return render_template('game.html', videos=data[2][::-1], game=data[0], logo=data[1], admin=session["admin"])
 
 @app.route('/socials')
 def socials():
@@ -61,3 +61,15 @@ def editgame():
     if request.method == 'POST':
         api.override_game(request.form["game"], request.form["name"], request.form["url"])
         return redirect(url_for('game') + f'?game={request.form["name"]}')
+
+@app.route('/editvideo', methods=['GET', 'POST'])
+def editvideo():
+    if "admin" not in session: session["admin"] = False
+    if not session["admin"]:
+        return redirect(url_for("index"))
+    video = request.args.get('video')
+    if request.method == 'GET':
+        return render_template("editvideo.html", video = video)
+    if request.method == 'POST':
+        api.override_video(request.form["video"], request.form["game"])
+        return redirect(url_for('game') + f'?game={request.form["game"]}')

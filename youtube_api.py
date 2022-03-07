@@ -63,6 +63,10 @@ class YoutubeVideo:
         self.date = json["snippet"]["publishTime"]
         self.description = json["snippet"]["description"]
 
+    def override(self, game):
+        self.game = game
+        self.gameName = self.get_game_name()
+
     @property
     def link(self):
         return f"https://www.youtube.com/watch?v={self.id}"
@@ -71,7 +75,7 @@ class YoutubeVideo:
     def get_game_name(self):
         overrides = json.load(open("video_game_override.json", "r"))["videos"]
         if self.id in overrides:
-            return overrides[self.id]
+            return overrides[self.id], overrides[self.id]
         cache = json.load(open("video_game_cache.json", "r"))
         if self.id in cache:
             game_name = cache[self.id]

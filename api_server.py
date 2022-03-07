@@ -10,9 +10,10 @@ import api_sync
 
 # Other Modules
 import json
+import html
 
 def format_video(video: api_sync.Video_Data):
-    return [video.title, video.link, video.description, video.thumbnail['url']]
+    return [html.unescape(video.title), video.link, video.description, video.thumbnail['url'], video.id]
 
 def format_game(game: api_sync.Game_Data):
     playtime = game.playtime
@@ -57,7 +58,21 @@ class API_Server:
 
     def override_game(self, game, name, url):
         self.api_sync.youtube_game_name_dict[game].override(name, url)
-        self.api_sync.__init__(self.api_sync.steam_games, self.api_sync.youtube_games, self.api_sync.non_steam_games)
+        self.api_sync.__init__(self.api_sync.steam_games, self.api_sync.youtube_games, self.api_sync.non_steam_games, [self.api_sync.youtube_videos[i] for i in self.api_sync.youtube_videos])
+
+    def override_video(self, video, game):
+        overrides = {}
+        with open("video_game_override.json", "r") as file:
+            overrides = json.load(file)
+        overrides["videos"][video] = game
+        with open("video_game_override.json", "w") as file:
+            json.dump(overrides, file)
+        vid = self.api_sync.get_video_from_id(video)
+        vid.game.videos.pop(vid.game.videos.index(vid))
+        self.api_sync.get_youtube_game_from_name(game).videos.append(vid)
+        vid.game = self.api_sync.get_youtube_game_from_name(game)
+        vid.game_name = game
+        #self.api_sync.__init__(self.api_sync.steam_games, self.api_sync.youtube_games, self.api_sync.non_steam_games, [self.api_sync.youtube_videos[i] for i in self.api_sync.youtube_videos])
 
 
 if __name__ == "__main__":

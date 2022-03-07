@@ -20,6 +20,7 @@ class Video_Data:
     date = None
     link = None
     description = None
+    id = None
 
 class Game_Data:
     name = None
@@ -34,11 +35,13 @@ class Game_Data:
 
 class API_Syncer:
 
-    def __init__(self, steam_games: steam_api.SteamGameList, youtube_games: youtube_api.YoutubeGameList, non_steam_games: generic.GameList):
+    def __init__(self, steam_games: steam_api.SteamGameList, youtube_games: youtube_api.YoutubeGameList, non_steam_games: generic.GameList, videos: list):
         self.game_dict: dict[youtube_api.YoutubeGame, generic.Game] = dict()
+        self.videos = videos
         self.steam_games = steam_games
         self.youtube_games = youtube_games
         self.non_steam_games = non_steam_games
+        self.youtube_videos = {video.id: video for video in videos}
         for game in youtube_games.game_list:
             steam_overlap = [steam_game for steam_game in steam_games.game_list if steam_game.name == game.name]
             non_steam_overlap = [non_steam_game for non_steam_game in non_steam_games.game_list if non_steam_game.name == game.name]
@@ -62,13 +65,24 @@ class API_Syncer:
         data.date = video.date
         data.description = video.description
         data.link = f"https://www.youtube.com/watch?v={video.id}"
+        data.id = video.id
         return data
     
     def get_game_from_name(self, game_name):
-        return self.game_name_dict[game_name]
+        if game_name in self.game_name_dict:
+            return self.game_name_dict[game_name]
 
     def get_youtube_game_from_name(self, game_name):
-        return self.youtube_game_name_dict[game_name]
+        if game_name in self.youtube_game_name_dict:
+            return self.youtube_game_name_dict[game_name]
+        else:
+            self.youtube_games.game_list.append(youtube_api.YoutubeGame(game_name))
+            self.__init__(self.steam_games,self.youtube_games,self.non_steam_games,self.videos)
+            return self.youtube_game_name_dict[game_name]
+    
+    def get_video_from_id(self, id: str):
+        return self.youtube_videos[id]
+
 
     def get_game_videos(self, game):
         if type(game) is str:
@@ -89,8 +103,12 @@ class API_Syncer:
         game_data.thumbnail = game.get_logo_url()
         game_data.video_count = len(video_list)
         game_data.playtime = game.get_game_playtime()
-        game_data.last_video = sorted(self.reverse_game_dict[game].videos, key = lambda x: x.date)[-1]
-        game_data.last_video_date = game_data.last_video.date
+        if len(self.reverse_game_dict[game].videos) < 1:
+            game_data.last_video = ""
+            game_data.last_video_date = "00-00-00T"
+        else:
+            game_data.last_video = sorted(self.reverse_game_dict[game].videos, key = lambda x: x.date)[-1]
+            game_data.last_video_date = game_data.last_video.date
         return game_data
     
     def get_steam_info(self, game):
@@ -111,7 +129,7 @@ def generate_synced_apis(load_cached=True):
     vids = [youtube_api.YoutubeVideo(vid) for vid in vids]
     steam_games = steam_api.generate_steamgamelist(load_cache=load_cached)
     non_steam = generic.GameList([])
-    synced = API_Syncer(steam_games, steam_api.SteamGameList([vid.game for vid in vids]), non_steam)
+    synced = API_Syncer(steam_games, steam_api.SteamGameList([vid.game for vid in vids]), non_steam, vids)
     return synced
 
 def update_videos(regenerate_videos=False, regenerate_games=False):
